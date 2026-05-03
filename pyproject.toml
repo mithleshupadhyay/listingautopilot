@@ -1,0 +1,15 @@
+[tool.poetry]
+name = "listingautopilot"
+version = "0.1.0"
+description = "AI service that converts product photos into Amazon-ready creative packs."
+authors = ["Mithlesh Upadhyay <mithleshupadhyay515@gmail.com>"]
+license = "MIT"
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "^3.12"
+
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
