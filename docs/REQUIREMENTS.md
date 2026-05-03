@@ -312,4 +312,4 @@ The MVP is successful when a reviewer can:
 - Brand kit ingestion.
 - Async job queue.
 - Persistent project history.
-- Multi-user accounts.
+- Multi-user accounts. 
