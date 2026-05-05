@@ -1,8 +1,11 @@
 """Streamlit dashboard for Listing Autopilot."""
 
+# ruff: noqa: E402
+
 from __future__ import annotations
 
 import json
+import os
 from datetime import datetime
 from pathlib import Path
 import sys
@@ -11,6 +14,18 @@ import streamlit as st
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "src"))
 
+
+def load_streamlit_root_secrets_to_env() -> None:
+    try:
+        for key, value in st.secrets.items():
+            if isinstance(value, str | int | float | bool) and not os.getenv(str(key)):
+                os.environ[str(key)] = str(value)
+    except Exception:
+        return
+
+
+load_streamlit_root_secrets_to_env()
+
 from listingautopilot.api.generation import generate_listing_pack
 from listingautopilot.config import settings
 from listingautopilot.core.models.user_context import UserContext
@@ -18,7 +33,6 @@ from listingautopilot.db.pgv.crud.projects import list_recent_projects
 from listingautopilot.db.pgv.db import get_sessionmaker
 from listingautopilot.exceptions import ListingAutopilotError
 from listingautopilot.logging import configure_logging, get_logger
-from listingautopilot.llm.providers import get_available_provider_types
 from listingautopilot.schemas.request import GenerateRequest
 
 
@@ -39,10 +53,35 @@ if settings.persistence_enabled:
         db = None
 
 with st.sidebar:
-    provider_values = [provider.value for provider in get_available_provider_types()]
-    if "demo" not in provider_values:
-        provider_values.insert(0, "demo")
+    provider_values = ["demo", "gemini", "openai"]
     llm_provider = st.selectbox("Model provider", provider_values, index=0)
+    selected_provider_env_key = None
+    if llm_provider == "gemini":
+        selected_provider_env_key = "GEMINI_API_KEY"
+    if llm_provider == "openai":
+        selected_provider_env_key = "OPENAI_API_KEY"
+
+    if selected_provider_env_key:
+        provider_label = "Gemini" if llm_provider == "gemini" else "OpenAI"
+        provider_key = st.text_input(
+            f"{provider_label} API key",
+            type="password",
+            help=(
+                f"Required for {provider_label}. This is applied only to the current "
+                "Streamlit process and is not saved by the app."
+            ),
+        )
+        if provider_key.strip():
+            os.environ[selected_provider_env_key] = provider_key.strip()
+            st.caption(f"{provider_label} key loaded for this session.")
+        elif os.getenv(selected_provider_env_key, "").strip():
+            st.caption(f"{provider_label} key loaded from environment.")
+        else:
+            st.warning(
+                f"{provider_label} needs `{selected_provider_env_key}`. "
+                "Enter a key here or select `demo`."
+            )
+
     save_to_db = st.checkbox("Save project", value=bool(db))
     if not settings.persistence_enabled:
         st.caption("DATABASE_URL not configured")
@@ -94,6 +133,11 @@ with right:
     if generate_clicked:
         if not uploaded_file:
             st.error("Upload a product photo first.")
+        elif llm_provider in {"gemini", "openai"} and not os.getenv(
+            "GEMINI_API_KEY" if llm_provider == "gemini" else "OPENAI_API_KEY", ""
+        ).strip():
+            required_key = "GEMINI_API_KEY" if llm_provider == "gemini" else "OPENAI_API_KEY"
+            st.error(f"{llm_provider.title()} selected, but `{required_key}` is missing.")
         else:
             logger.info(
                 "Dashboard generation requested provider=%s save_to_db=%s filename=%s",
