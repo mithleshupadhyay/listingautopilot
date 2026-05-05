@@ -1,0 +1,14 @@
+**/.env
+.venv/
+__pycache__/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+**/__pycache__/
+**/.pytest_cache/
+**/.mypy_cache/
+**/.ruff_cache/
+*.pyc
+**/.streamlit/secrets.toml
+**/outputs/*
+!**/outputs/.gitkeep
