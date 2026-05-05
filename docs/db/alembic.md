@@ -2,11 +2,7 @@
 
 Alembic manages the optional Postgres persistence schema for saved Listing Autopilot projects.
 
-Run all commands from the service folder:
-
-```bash
-cd listingautopilot
-```
+Run all commands from the repository root.
 
 ## 1. Start Local Postgres
 

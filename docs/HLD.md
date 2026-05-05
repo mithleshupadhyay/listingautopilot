@@ -283,7 +283,7 @@ flowchart LR
     SRC --> PG
 
     GH[GitHub Repo] --> SCC[Streamlit Community Cloud]
-    SCC --> APP[listingautopilot/dashboard/streamlit_app.py]
+    SCC --> APP[dashboard/streamlit_app.py]
     APP --> SECRETS[Streamlit Secrets]
 ```
 

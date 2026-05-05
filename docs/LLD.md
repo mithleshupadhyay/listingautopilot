@@ -3,7 +3,7 @@
 ## 1. Repository Structure
 
 ```text
-listingautopilot/
+.
 ├── alembic/
 │   ├── env.py
 │   ├── README
@@ -386,6 +386,6 @@ alembic upgrade head
 
 Streamlit Community Cloud:
 
-- app entrypoint: `listingautopilot/dashboard/streamlit_app.py`
+- app entrypoint: `dashboard/streamlit_app.py`
 - secrets: provider keys and optional `DATABASE_URL`
 - demo mode works without secrets
