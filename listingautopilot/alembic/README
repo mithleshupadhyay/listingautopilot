@@ -1,0 +1,6 @@
+Single-database Alembic environment for Listing Autopilot.
+
+Use from the service root:
+
+    alembic revision --autogenerate -m "message"
+    alembic upgrade head

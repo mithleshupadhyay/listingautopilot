@@ -1,0 +1,19 @@
+services:
+  postgres:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_DB: listingautopilot
+      POSTGRES_USER: listingautopilot
+      POSTGRES_PASSWORD: listingautopilot
+    ports:
+      - "5432:5432"
+    volumes:
+      - listingautopilot_pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U listingautopilot -d listingautopilot"]
+      interval: 5s
+      timeout: 3s
+      retries: 20
+
+volumes:
+  listingautopilot_pgdata:
